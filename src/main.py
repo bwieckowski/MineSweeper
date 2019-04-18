@@ -1,22 +1,13 @@
 from  tkinter import *
+from src.interface import Interface
 
 
-
-def showText() :
-    print( mField.get())
-    print(nField.get())
+def test():
+    print(self.width)
 
 root = Tk()
-label = Label(root, text="test xD ")
-mField = Entry(root)
-nField = Entry(root)
 
-
-
-buttin = Button(root,text="Call me", command =  lambda: showText())
-label.pack()
-mField.pack()
-nField.pack()
-buttin.pack()
+interface = Interface( root )
+interface.registerCallback( test )
 
 root.mainloop()
