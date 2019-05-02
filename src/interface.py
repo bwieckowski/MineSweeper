@@ -27,7 +27,7 @@ class Interface( Frame ):
         self.minesEntry = Entry(self)
         self.minesEntry.grid(row=2, column=1)
 
-        buttin = Button(self, text="Call me", command=lambda: self.callFunctions() ).grid(row=3)
+        button = Button(self, text="Call me", command=lambda: self.callFunctions() ).grid(row=3)
 
         self.pack()
 
@@ -36,7 +36,7 @@ class Interface( Frame ):
             fun()
 
     def registerCallback(self, fun ):
-        self.callbacks.append( fun )
+        self.fun = fun
 
     def initValues(self) :
 

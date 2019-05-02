@@ -2,9 +2,6 @@ from  tkinter import *
 from src.interface import Interface
 
 
-def test():
-    print(self.width)
-
 root = Tk()
 
 interface = Interface( root )
