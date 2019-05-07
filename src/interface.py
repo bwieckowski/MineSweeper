@@ -1,6 +1,7 @@
 from tkinter import *
 from tkinter import messagebox
 
+from src.storage import Storage
 from src.validation import Validation
 
 
@@ -9,11 +10,10 @@ class Interface( Frame ):
 
     def __init__(self, parent):
 
-
+        self.validator = Validation()
         Frame.__init__(self,parent)
 
         self.callbacks = []
-        self.callbacks.append( self.initValues )
 
         heightLabel = Label(self, text="wysokość").grid(row=0)
         self.heightEntry = Entry(self)
@@ -27,31 +27,43 @@ class Interface( Frame ):
         self.minesEntry = Entry(self)
         self.minesEntry.grid(row=2, column=1)
 
-        button = Button(self, text="Call me", command=lambda: self.callFunctions() ).grid(row=3)
-
+        button = Button(self, text="Call me", command=lambda: self.callFunctions() ).grid(row=3, column=1)
+        exit = Button(self, text="Exit", command=parent.destroy).grid(row=3, column=2)
         self.pack()
 
     def callFunctions(self):
-        for fun in self.callbacks:
-            fun()
+        self.initValues()
+        if self.validator.status :
+            for fun in self.callbacks:
+                fun()
 
     def registerCallback(self, fun ):
-        self.fun = fun
+        self.callbacks.append( fun )
 
     def initValues(self) :
 
         try:
-            validator = Validation()
-            validator.size( int(self.widthEntry.get()), int(self.heightEntry.get()), int(self.minesEntry.get()))
+            self.validator.size( self.widthEntry.get(), self.heightEntry.get(), self.minesEntry.get())
 
         except Exception as exc:
             messagebox.showerror("Error", str(exc.getValue()))
 
+
         else:
-            self.width = self.widthEntry.get()
-            self.height = self.widthEntry.get()
-            self.mines = self.minesEntry.get()
+            self.width = int(self.widthEntry.get())
+            self.height = int(self.widthEntry.get())
+            self.mines = int(self.minesEntry.get())
+
+            storage = Storage()
+
+            storage.add("mines",self.mines)
+            storage.add("height", self.height)
+            storage.add("width",self.width)
+            print("Save in storage")
         finally:
-            print( self.widthEntry.get() )
+            self.widthEntry.delete(0, 'end')
+            self.heightEntry.delete(0, 'end')
+            self.minesEntry.delete(0, 'end')
+
 
 

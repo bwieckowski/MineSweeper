@@ -1,9 +1,18 @@
-from src.exceptions import FieldSizeException, MinesAmountException
+from src.exceptions import *
 
 
 class Validation:
 
+
+
     def size(self, width, height, mines):
+        self.status = False
+        if width == "" or height == "" or mines == "" :
+            raise EmptyFieldException( "Wypełnij wszyskie pola" )
+        else :
+            width = int(width)
+            height = int(height)
+            mines = int(mines)
 
         if width < 2:
             raise FieldSizeException("Za mała szerokość pola")
@@ -22,3 +31,5 @@ class Validation:
 
         if mines >= height*width:
             raise MinesAmountException("Za duża liczba min")
+
+        self.status = True

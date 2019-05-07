@@ -14,36 +14,37 @@ class Point:
 
 class Board:
 
-    def __init__(self, w, h ):
+    outlineCoords = [Point(1, -1), Point(1, 0), Point(1, 1), Point(0, -1), Point(0, 1), Point(-1, -1), Point(-1, 0), Point(-1, 1)]
+
+    def __init__(self, w, h, m ):
         self.minesCoords = set()
         self.width = w
         self.height = h
+        self.mines = m
 
-        self.outlineCoords = [ Point(1,-1), Point(1,0), Point(1,1) , Point(0,-1), Point(0,1),Point( -1,-1), Point(-1,0), Point(-1,1) ]
-
-    def init(self, w,h, m):
-        self.createGrid( )
-        self.putMines( m )
-        self.putNumbers()
+        self.__createGrid()
+        self.__putMines()
+        self.__putNumbers()
 
 
-    def createGrid(self):
+
+    def __createGrid(self):
         self.grid = [[ 0 for column in range(self.width) ] for row in range(self.height) ]
 
 
-    def putMines(self, m ):
-        while m > 0 :
+    def __putMines( self ):
+        while self.mines > 0 :
             while True :
                 i = random.randint(0, self.width - 1 )
                 j = random.randint(0, self.height - 1)
                 if self.grid[i][j] != minSing :
                     self.minesCoords.add(Point(i,j))
                     self.grid[i][j] = minSing
-                    m -= 1
+                    self.mines -= 1
                     break
 
 
-    def validOutline(self, outline):
+    def __validOutline(self, outline):
 
         if outline[0] < 0 or outline[1] <0  :
             return False
@@ -57,21 +58,19 @@ class Board:
         return True
 
 
-    def putNumbers(self):
+    def __putNumbers(self):
         for mine in self.minesCoords :
             for outline in self.outlineCoords:
                 newPoint = outline+mine
-                if self.validOutline( newPoint ) :
+                if self.__validOutline( newPoint ) :
                     self.grid[ newPoint[0] ][ newPoint[1] ] += 1
 
 
-    def getBoard(self):
+    def __call__(self):
         return self.grid
 
 
 if __name__ == "__main__":
-    board = Board( 4,4 )
-    board.createGrid( )
-    board.putMines( 2 )
-    board.putNumbers()
-    print(board.getBoard())
+
+    board = Board( 4,4,2 )
+    print(board())
