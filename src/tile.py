@@ -1,47 +1,79 @@
 from tkinter import Label, PhotoImage
 
+from src.myLabel import MyLabel
 
-class Tile( Label ) :
+
+class Tile( MyLabel ) :
+
+    def __init__(self, root, type, point ):
+        self.flagLevel = 0
+        self.active = True
+        super(Tile, self ).__init__( root )
+        self.type = type
+        self.point = point
+        self.setImage("../res/images/blank.gif")
+        self.bind("<Button-1>", self.action)
+        self.bind("<Button-2>", self.flag)
+
+    def isActive(self):
+        return self.active
+
+    def disActive(self):
+        self.active = False
+
+    def open(self):
+        if self.flagLevel == 0:
+            self.setImage(self.underphoto)
 
     def action(self,event):
-        if not self.isFlagged:
-            self.config( image=self.underphoto )
-            self.image = self.underphoto
-            self.isCovered = False
-        return "break"
+        self.open()
+
+    def getCoords(self):
+        return self.point.getCoords()
+
 
     def flag(self, event):
+        if self.active :
 
-        if self.isCovered :
-            if  not self.isFlagged :
-                self.isFlagged = True
-                flagged = PhotoImage(file="../res/images/bombflagged.gif")
-                self.config(image= flagged)
-                self.image = flagged
+            if  self.flagLevel == 0 :
+                self.flagLevel = 1
+                self.setImage("../res/images/bombflagged.gif")
+
+            elif self.flagLevel == 1 :
+                self.flagLevel = 2
+                self.setImage("../res/images/bombquestion.gif")
+
             else  :
-                photo = PhotoImage(file="../res/images/blank.gif")
-                self.config(image=photo)
-                self.image = photo
+                self.flagLevel = 0
+                self.setImage("../res/images/blank.gif")
                 self.isFlagged = False
 
 
 
-    def __init__(self, root, type ):
-        self.isFlagged = False
-        self.isCovered = True
 
-        self.type = type
-        photo=PhotoImage(file= "../res/images/blank.gif")
+class Bomb( Tile ) :
 
-        if type == "m" :
-            self.underphoto = PhotoImage(file= "../res/images/bombrevealed.gif")
-        else :
-            url = "../res/images/open"+str(type)+".gif"
-            self.underphoto = PhotoImage(file=url)
+    def __init__(self, root, point ):
+            Tile.__init__( self, root, "m", point )
+            self.underphoto = "../res/images/bombdeath.gif"
 
-        super(Tile, self).__init__( root, image=photo,bd=0,highlightthickness = 0 )
-        self.image = photo
-        self.pack()
-        self.bind("<Button-1>", self.action)
-        self.bind("<Button-2>", self.flag)
+    def shade(self):
+        self.setImage("../res/images/blankShaded.gif")
 
+
+class Number( Tile ):
+
+    def __init__(self, root, type, point ):
+        Tile.__init__( self, root, type, point )
+        self.underphoto = "../res/images/open" + str(type) + ".gif"
+
+
+
+class TileFactory :
+    def getTile(self, root, type, point ):
+        tile = None
+        if type == "m":
+            tile = Bomb( root, point )
+        else:
+            tile = Number( root, type,point )
+        return tile

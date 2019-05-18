@@ -3,20 +3,34 @@ import random
 minSing = "m"
 
 class Point:
+
     def __init__(self, x,y):
         self.coords = (x,y)
 
     def __add__(self, other):
-        return (self.coords[0]+other.coords[0], self.coords[1]+other.coords[1])
+        return Point(self.coords[0]+other.coords[0], self.coords[1]+other.coords[1])
 
-    def __call__(self, *args, **kwargs):
+    def __call__(self, i):
+        return self.coords[i]
+
+    def getX(self):
+        return self.coords[0]
+
+    def getY(self):
+        return self.coords[1]
+
+    def getCoords(self):
         return self.coords
+
+
 
 class Board:
 
     outlineCoords = [Point(1, -1), Point(1, 0), Point(1, 1), Point(0, -1), Point(0, 1), Point(-1, -1), Point(-1, 0), Point(-1, 1)]
+    findingZerosCoords = [Point(1, 0),Point(-1, 0),Point(0, 1),Point(0, -1)]
 
     def __init__(self, w, h, m ):
+
         self.minesCoords = set()
         self.width = w
         self.height = h
@@ -25,6 +39,8 @@ class Board:
         self.__createGrid()
         self.__putMines()
         self.__putNumbers()
+
+        self.zeros = [];
 
 
 
@@ -43,16 +59,44 @@ class Board:
                     self.mines -= 1
                     break
 
+    def findingZeros(self, point):
+        if self.__validOutline(point):
+            if self(point) == 0 and point.getCoords() not in self.zeros:
+                self.zeros.append(point.getCoords())
+                for item in self.findingZerosCoords:
+                    newPoint = point + item
+                    self.findingZeros(newPoint)
+            else:
+                return
+        else:
+            return
+    def clearZeros( self ):
+        self.zeros = []
 
-    def __validOutline(self, outline):
+    def getZerosFrom( self, point ):
+        self.findingZeros(point)
+        return self.zeros
 
-        if outline[0] < 0 or outline[1] <0  :
+
+
+
+
+
+    def getWidth(self):
+        return self.width
+
+    def getHeight(self):
+        return self.height
+
+    def __validOutline(self, outlinePoint ):
+
+        if outlinePoint(0) < 0 or outlinePoint(1) < 0  :
             return False
 
-        if outline[0] > self.width-1 or outline[1] > self.height-1  :
+        if outlinePoint(0) > self.width-1 or outlinePoint(1) > self.height-1  :
             return False
 
-        if self.grid[outline[0]][outline[1]] == minSing:
+        if self(outlinePoint) == minSing:
             return False
 
         return True
@@ -62,12 +106,15 @@ class Board:
         for mine in self.minesCoords :
             for outline in self.outlineCoords:
                 newPoint = outline+mine
+
                 if self.__validOutline( newPoint ) :
-                    self.grid[ newPoint[0] ][ newPoint[1] ] += 1
+                    self.grid[ newPoint(0) ][ newPoint(1) ] += 1
 
-
-    def __call__(self):
-        return self.grid
+    def __call__(self, point):
+        if(isinstance(point, Point )):
+            return self.grid[point.getX()][point.getY()]
+        else :
+            return self.grid[point[0]][point[1]]
 
 
 if __name__ == "__main__":
