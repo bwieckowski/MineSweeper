@@ -5,24 +5,28 @@ from src.myLabel import MyLabel
 
 class Tile( MyLabel ) :
 
-    def __init__(self, root, type, point ):
-        self.flagLevel = 0
-        self.active = True
+    def __init__(self, root, point ):
+        self.__flagLevel = 0
+        self.__active = True
+        self.__isFlagged = False
         super(Tile, self ).__init__( root )
-        self.type = type
+
         self.point = point
         self.setImage("../res/images/blank.gif")
         self.bind("<Button-1>", self.action)
         self.bind("<Button-2>", self.flag)
 
     def isActive(self):
-        return self.active
+        return self.__active
+
+    def getFlagLevel(self):
+        return self.__flagLevel
 
     def disActive(self):
-        self.active = False
+        self.__active = False
 
     def open(self):
-        if self.flagLevel == 0:
+        if self.__flagLevel == 0:
             self.setImage(self.underphoto)
 
     def action(self,event):
@@ -33,20 +37,22 @@ class Tile( MyLabel ) :
 
 
     def flag(self, event):
-        if self.active :
+        if self.__active :
 
-            if  self.flagLevel == 0 :
-                self.flagLevel = 1
+            if  self.__flagLevel == 0 :
+                self.__flagLevel = 1
                 self.setImage("../res/images/bombflagged.gif")
+                self.__isFlagged = True
 
-            elif self.flagLevel == 1 :
-                self.flagLevel = 2
+            elif self.__flagLevel == 1 :
+                self.__flagLevel = 2
                 self.setImage("../res/images/bombquestion.gif")
+                self.__isFlagged = True
 
             else  :
-                self.flagLevel = 0
+                self.__flagLevel = 0
                 self.setImage("../res/images/blank.gif")
-                self.isFlagged = False
+                self.__isFlagged = False
 
 
 
@@ -54,18 +60,27 @@ class Tile( MyLabel ) :
 class Bomb( Tile ) :
 
     def __init__(self, root, point ):
-            Tile.__init__( self, root, "m", point )
-            self.underphoto = "../res/images/bombdeath.gif"
+            Tile.__init__( self, root, point )
+            self.underphoto = "../res/images/bombrevealed.gif"
 
     def shade(self):
-        self.setImage("../res/images/blankShaded.gif")
+        if  self.getFlagLevel() == 0:
+            self.setImage("../res/images/blankShaded.gif")
+
+
+    def boom(self):
+        self.setImage("../res/images/bombdeath.gif")
 
 
 class Number( Tile ):
 
-    def __init__(self, root, type, point ):
-        Tile.__init__( self, root, type, point )
-        self.underphoto = "../res/images/open" + str(type) + ".gif"
+    def __init__(self, root, point,value ):
+        self.__value = value
+        Tile.__init__( self, root, point )
+        self.underphoto = "../res/images/open" + str(value) + ".gif"
+
+    def getValue(self):
+        return self.__value
 
 
 
@@ -75,5 +90,5 @@ class TileFactory :
         if type == "m":
             tile = Bomb( root, point )
         else:
-            tile = Number( root, type,point )
+            tile = Number( root,point, type )
         return tile

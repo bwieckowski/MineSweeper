@@ -9,6 +9,9 @@ class Except(Exception):
         return self.value
 
 
+class NotDigitExceptions(Except):
+    pass
+
 class FieldSizeException(Except):
     pass
 

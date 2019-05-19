@@ -3,16 +3,17 @@ from src.exceptions import *
 
 class Validation:
 
-
-
     def size(self, width, height, mines):
         self.status = False
         if width == "" or height == "" or mines == "" :
             raise EmptyFieldException( "Wypełnij wszyskie pola" )
-        else :
+
+        if width.isdigit()  and height.isdigit() and mines.isdigit() :
             width = int(width)
             height = int(height)
             mines = int(mines)
+        else :
+            raise NotDigitExceptions(" Wpisz liczbę ")
 
         if width < 2:
             raise FieldSizeException("Za mała szerokość pola")

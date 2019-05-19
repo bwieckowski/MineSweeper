@@ -14,7 +14,7 @@ class Interface( Frame ):
         Frame.__init__(self,parent)
 
         self.callbacks = []
-
+        self.parent = parent
         heightLabel = Label(self, text="wysokość").grid(row=0)
         self.heightEntry = Entry(self)
         self.heightEntry.grid(row=0, column=1)
@@ -27,15 +27,17 @@ class Interface( Frame ):
         self.minesEntry = Entry(self)
         self.minesEntry.grid(row=2, column=1)
 
-        button = Button(self, text="Call me", command=lambda: self.callFunctions() ).grid(row=3, column=1)
-        exit = Button(self, text="Exit", command=parent.destroy).grid(row=3, column=2)
-        self.pack()
+        button = Button(self, text="Start Game", command=lambda: self.callFunctions() ).grid(row=3, column=0, padx=10)
+        exit = Button(self, text="Exit", command=parent.destroy).grid(row=3, column=2,padx=10,)
+        self.pack( pady=10)
 
     def callFunctions(self):
         self.initValues()
         if self.validator.status :
             for fun in self.callbacks:
                 fun()
+
+        self.parent.focus()
 
     def registerCallback(self, fun ):
         self.callbacks.append( fun )
@@ -46,6 +48,10 @@ class Interface( Frame ):
             self.validator.size( self.widthEntry.get(), self.heightEntry.get(), self.minesEntry.get())
 
         except Exception as exc:
+            self.widthEntry.delete(0, 'end')
+            self.heightEntry.delete(0, 'end')
+            self.minesEntry.delete(0, 'end')
+
             messagebox.showerror("Error", str(exc.getValue()))
 
 
@@ -60,10 +66,6 @@ class Interface( Frame ):
             storage.add("height", self.height)
             storage.add("width",self.width)
             print("Save in storage")
-        finally:
-            self.widthEntry.delete(0, 'end')
-            self.heightEntry.delete(0, 'end')
-            self.minesEntry.delete(0, 'end')
 
 
 

@@ -88,9 +88,6 @@ class MyTimer( Counter):
     def reset(self):
         self.setVal(0)
 
-class MineCounter( Counter ):
-    pass
-
 
 
 if __name__ == "__main__" :
