@@ -136,7 +136,7 @@ class Game(  ):
         self.startGame()
 
         if self.tilesAmount == self.mines:
-            self.win( "wygrałeś")
+            self.gameOver( "wygrałeś")
 
         tile = event.widget
         point = tile.point
